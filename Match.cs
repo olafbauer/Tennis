@@ -40,7 +40,7 @@ namespace Tennis
 
 		public bool NeedNewSet ()
 		{
-			return Sets.Count == 0 || Set.IsOver (Sets.Last ());
+			return Sets.Count == 0 || Sets.Last ().IsOver ();
 		}
 
 		public Set CurrentSet ()
@@ -55,7 +55,7 @@ namespace Tennis
 
 		public static Score CurrentScore (Match match)
 		{
-			return Score.SumOfWins (match.Sets.Where (Set.IsOver).Select (Set.CurrentScore).ToList ());
+			return Score.SumOfWins (match.Sets.Where (s => s.IsOver ()).Select (s => s.CurrentScore ()).ToList ());
 		}
 	}
 }

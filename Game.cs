@@ -6,34 +6,60 @@ using System.Threading.Tasks;
 
 namespace Tennis
 {
-	public class Game : Rally
+	public class Game
 	{
-		public static List<string> ScoreStrings (Rally game)
+		private ICounter _counter;
+		public List<Score> Scores;
+
+		public Game (ICounter counter)
 		{
-			List<string> strings = Score.GameScoreList (game.Scores).Select (UI.ScoreStringHuman).ToList ();
-			return (Game.IsOver (game)) ? Helper.RemoveLast (strings) : strings;
+			_counter = counter;
+			this.Scores = new List<Score> ();
 		}
 
-		public static string Header (int set, int game)
+		public void Serve (char key)
 		{
-			return String.Format ("Set {0}, Game {1}", set, game);
+			Scores.Add (Service (key));
 		}
 
-		public static bool IsOver (Rally game)
+		private Score Service (char key)
+		{
+			return key.Equals ('a') ? new Score (1, 0) : key.Equals ('b') ? new Score (0, 1) : new Score (0, 0);
+		}
+
+		public List<Score> GetScores ()
+		{
+			return Scores;
+		}
+
+		public string ScoreString ()
+		{
+			return _counter.CurrentScoreString (CurrentScore ());
+		}
+
+		public string CurrentScoreString ()
+		{
+			return _counter.CurrentScoreString (CurrentScore ());
+		}
+
+		public List<string> ScoreStrings ()
+		{
+			return _counter.ScoreStrings (this);
+		}
+
+		public string Header (int set, int game)
+		{
+			return _counter.Header (set, game);
+		}
+
+		public bool IsOver ()
 		{  
-			if (game.GetType () == typeof(Tiebreak)) {
-				return Tiebreak.IsOver (game);
-			}
-			Score score = Game.CurrentScore (game);
-			return score.HasMin (4) && score.HasAdvance (2);
+			return _counter.IsOver (CurrentScore ());
 		}
 
-		public static Score CurrentScore (Rally game)
+		public Score CurrentScore ()
 		{
-			if (game.GetType () == typeof(Tiebreak)) {
-				return Tiebreak.CurrentScore (game);
-			}
-			return Score.SumWithDeuce (game.Scores);
+			return _counter.CurrentScore (Scores);
 		}
 	}
 }

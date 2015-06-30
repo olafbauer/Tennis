@@ -9,11 +9,11 @@ namespace Tennis
 {
 	public class Set
 	{
-		public readonly List<Rally> Games;
+		public readonly List<Game> Games;
 
 		public Set ()
 		{
-			Games = new List<Rally> ();
+			Games = new List<Game> ();
 		}
 
 		public void Serve (char key)
@@ -21,46 +21,46 @@ namespace Tennis
 			NewOrRunningGame ().Serve (key);
 		}
 
-		public Rally NewOrRunningGame ()
+		public Game NewOrRunningGame ()
 		{
 			return NeedNewGame () ? NewGame () : CurrentGame ();
 		}
 
-		public Rally NewGame ()
+		public Game NewGame ()
 		{
-			Games.Add (IsTiebreak () ? new Tiebreak () as Rally : new Game () as Rally);
+			Games.Add(IsTiebreak() ? new Game(new TiebreakCounter()) : new Game(new GameCounter()));
 			return CurrentGame ();
 		}
 
 		public bool NeedNewGame ()
 		{
-			return Games.Count == 0 || Game.IsOver (Games.Last ());
+			return Games.Count == 0 || Games.Last ().IsOver ();
 		}
 
-		public Rally CurrentGame ()
+		public Game CurrentGame ()
 		{
 			return Games.Count > 0 ? Games.Last () : null;
 		}
 
 		public bool IsTiebreak ()
 		{
-			return Settings.ApplyTiebreak && Set.CurrentScore (this).BothEqualTo (Settings.MinGames);
+			return Settings.ApplyTiebreak && CurrentScore ().BothEqualTo (Settings.MinGames);
 		}
 
-		public char GetChar ()
+		public bool IsOver ()
 		{
-			return Console.ReadKey (true).KeyChar;
-		}
-
-		public static bool IsOver (Set set)
-		{
-			Score score = Set.CurrentScore (set);
+			Score score = CurrentScore ();
 			return (score.HasMin (Settings.MinGames) && score.HasAdvance (2)) || (Settings.ApplyTiebreak && score.HasMin (7));
 		}
 
-		public static Score CurrentScore (Set set)
+		public Score CurrentScore ()
 		{
-			return Score.SumOfWins (set.Games.Where (Game.IsOver).Select (Game.CurrentScore).ToList ());
+			return Score.SumOfWins (Games.Where (g => g.IsOver ()).Select (g => g.CurrentScore ()).ToList ());
+		}
+
+		public string CurrentScoreString ()
+		{
+			return "Set: " + Score.ScoreString (CurrentScore ());
 		}
 	}
 }

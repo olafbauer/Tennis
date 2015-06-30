@@ -20,11 +20,10 @@ namespace Tennis
 			return range.Zip (set.Games, (count, game) => GameHistory (count, game, setNum)).ToList ();
 		}
 
-		public static List<string> GameHistory (int gameNum, Rally game, int setNum)
+		public static List<string> GameHistory (int gameNum, Game game, int setNum)
 		{
-			bool isTiebreak = game.GetType () == typeof(Tiebreak);
-			List<string> scoreStrings = isTiebreak ? Tiebreak.ScoreStrings (game) : Game.ScoreStrings (game);
-			string header = isTiebreak ? Tiebreak.Header (setNum, gameNum) : Game.Header (setNum, gameNum);
+			List<string> scoreStrings = game.ScoreStrings ();
+			string header = game.Header (setNum, gameNum);
 
 			List<string> history = new List<string> ();
 			history.Add (header);

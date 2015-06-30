@@ -84,6 +84,16 @@ namespace Tennis
 			return list;
 		}
 
+		public static string ScoreString (Score s)
+		{
+			return s.a + " - " + s.b;
+		}
+
+		public static string ScoreStringHuman (Score s)
+		{
+			return Translate.Dict (s.a) + " - " + Translate.Dict (s.b);
+		}
+
 		public bool HasMin (int minPoints)
 		{
 			return Max () >= minPoints;
@@ -124,6 +134,5 @@ namespace Tennis
 		{
 			return base.GetHashCode ();
 		}
-
 	}
 }

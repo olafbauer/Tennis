@@ -6,13 +6,22 @@ using System.Threading.Tasks;
 
 namespace Tennis
 {
-    static class Translate
-    {
-        public static string[] Points = new string[] { "Love", "Fifteen", "Thirty", "Forty", "Deuce", "Advance", "Win" , "Undefined"};
+	static class Translate
+	{
+		public static string[] Points = new string[] {
+			"Love",
+			"Fifteen",
+			"Thirty",
+			"Forty",
+			"Deuce",
+			"Advance",
+			"Win" ,
+			"Undefined"
+		};
 
-        public static string Dict(int index)
-        {
-            return Points[index];
-        }
-    }
+		public static string Dict (int index)
+		{
+			return Points [index];
+		}
+	}
 }

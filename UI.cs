@@ -16,11 +16,11 @@ namespace Tennis
 		public static void Display (Match match)
 		{
 			Set set = match.CurrentSet ();
-			Rally game = set.CurrentGame ();
+			Game game = set.CurrentGame ();
 
-			if (!Game.IsOver (game)) {
+			if (!game.IsOver ()) {
 				UI.Scoreboard (game);
-			} else if (!Set.IsOver (set)) {
+			} else if (!set.IsOver ()) {
 				UI.Scoreboard (set);
 			} else {
 				UI.Scoreboard (match);
@@ -34,7 +34,7 @@ namespace Tennis
 
 		public static void Scoreboard (Match m)
 		{
-			List<Score> scores = m.Sets.Select (Set.CurrentScore).ToList ();
+			List<Score> scores = m.Sets.Select (s => s.CurrentScore ()).ToList ();
 			var range = Enumerable.Range (1, scores.Count);
 			List<int> p1 = scores.Select (score => score.a).ToList ();
 			List<int> p2 = scores.Select (score => score.b).ToList ();
@@ -53,25 +53,13 @@ namespace Tennis
 
 		public static void Scoreboard (Set set)
 		{
-			Console.WriteLine ("Set: " + ScoreString (Set.CurrentScore (set)));
+			Console.WriteLine (set.CurrentScoreString());
 		}
 
-		public static void Scoreboard (Rally game)
+		public static void Scoreboard (Game game)
 		{
-			bool isTiebreak = game.GetType () == typeof(Tiebreak);
-			Score score = isTiebreak ? Tiebreak.CurrentScore (game) : Game.CurrentScore (game);
-			String scoreString = isTiebreak ? ScoreString (score) : "Game: " + ScoreStringHuman (score);
+			String scoreString = game.CurrentScoreString ();
 			Console.WriteLine (scoreString);
-		}
-
-		public static string ScoreString (Score s)
-		{
-			return s.a + " - " + s.b;
-		}
-
-		public static string ScoreStringHuman (Score s)
-		{
-			return Translate.Dict (s.a) + " - " + Translate.Dict (s.b);
 		}
 
 		public static string FormatAgg (string acc, int i)
@@ -83,6 +71,5 @@ namespace Tennis
 		{
 			return "Winner: Player " + score.Winner ().ToString ().ToUpper () + " with " + score.WinScore ();
 		}
-
 	}
 }
